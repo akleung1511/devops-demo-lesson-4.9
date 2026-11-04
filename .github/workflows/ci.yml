@@ -5,6 +5,9 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   # ==========================================
@@ -64,7 +67,7 @@ jobs:
         with:
           name: test-reports
           path: target/surefire-reports
-
+          
   # ==========================================
   # PUBLISH JOB - Build and push Docker image
   # ==========================================
@@ -89,11 +92,14 @@ jobs:
       - name: Build Docker image
         run: |
           echo "Building Docker image..."
-          docker build -t $DOCKER_USERNAME/devops-demo:latest .
-
+          docker build \
+            -t $DOCKER_USERNAME/devops-demo:latest \
+            -t $DOCKER_USERNAME/devops-demo:${{ github.sha }} .
+            
       - name: Push to Docker Hub
         run: |
           echo "Logging in to Docker Hub..."
           echo "$DOCKER_TOKEN" | docker login -u "$DOCKER_USERNAME" --password-stdin
           echo "Pushing image to Docker Hub..."
           docker push $DOCKER_USERNAME/devops-demo:latest
+          docker push $DOCKER_USERNAME/devops-demo:${{ github.sha }}
