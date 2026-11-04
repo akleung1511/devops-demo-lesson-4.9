@@ -151,3 +151,8 @@ The main trade-offs are the additional maintenance workload and responsibility f
 I recommend CircleCI because the consultancy manages projects across different Git platforms, including GitHub and Bitbucket. A managed CI service can provide a centralised CI/CD dashboard and consistent pipeline configuration across supported repositories. CircleCI also reduces infrastructure maintenance because the provider operates the hosted CI environment, allowing the consultancy's developers to focus on client projects.
 
 The main trade-offs are dependence on a third-party CI provider and the need to manage integrations, credentials and client permissions. Platform-integrated tools such as GitHub Actions are less suitable because they are tied to their respective Git platforms, making a unified CI/CD approach more difficult. Self-hosted tools such as Jenkins could support multiple repositories but would require the consultancy to maintain its own CI infrastructure, which it explicitly wants to avoid.
+
+
+## 4. Equivalent Changes in CircleCI
+
+In CircleCI, I would configure workflow branch filters so that build and test run for pull requests, while publish runs only for the main branch after successful tests. I would use `CIRCLE_BRANCH` and `CIRCLE_PULL_REQUEST` where appropriate to distinguish publishing conditions and prevent Docker images from being published during pull-request validation. I would also tag Docker images with both `latest` and `${CIRCLE_SHA1}` to identify the exact Git commit used for each image.
